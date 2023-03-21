@@ -1,11 +1,14 @@
 package com.mysite.sbb.question;
 
 import com.mysite.sbb.answer.Answer;
+import com.mysite.sbb.user.SiteUser;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -24,6 +27,16 @@ public class Question {
 
     private LocalDateTime createDate;
 
+    private LocalDateTime modifiedDate;
+
+    @ManyToOne
+    private SiteUser author;
+
     @OneToMany(mappedBy = "question", cascade = CascadeType.REMOVE)
-    private List<Answer> answerList;
+    private List<Answer> answerList = new ArrayList<>();
+
+    public void addAnswer(Answer answer) {
+        answer.setQuestion(this);
+        answerList.add(answer);
+    }
 }
