@@ -7,9 +7,9 @@
             <div class="card-text" th:utext="${@commonUtil.markdown(question.content)}">내용</div>
         </div>
         <div>
-            <a class="question_comment_toggle" href="javascript:void(0);">댓글 목록</a>
+            <a class="comment_toggle" href="javascript:void(0);">댓글 목록</a>
             <!-- 댓글반복 시작-->
-            <div id="question_comment_form" style="display: none">
+            <div id="comment_list" style="display: none">
                 <div th:each="comment : ${question.comments}">
                     <div class="display-flex">
                         <span th:text="${comment.author.name}">댓글 작성자</span>
@@ -19,7 +19,8 @@
                 </div>
 
                 <!-- 댓글 폼 -->
-                <form  th:object="${commentForm}" th:action="@{|/comment/create/question/${question.id}|}" method="post">
+                <form  th:object="${commentForm}" th:action="@{|/comment/create/question/${question.id}|}" method="post"
+                       onsubmit="return check(this)">
                     <div th:fragment="~{form_errors :: formErrosFragment}"></div>
                     <textarea sec:authorize="isAnonymous()" disabled class="form-control" th:field="*{content}" id="content"
                               rows="10"></textarea>
@@ -98,10 +99,10 @@
                 </div>
             </div>
             <div>
-                <a class="answer_comment_toggle"
-                   th:id="|answer_${answer.id}_comment_toggle|" href="javascript:void(0);" th:value="${answer.id}">댓글 목록</a>
+                <a class="comment_toggle"
+                   th:id="|answer_${answer.id}_comment_toggle|" href="javascript:void(0);">댓글 목록</a>
                 <!-- 댓글반복 시작-->
-                <div class="answer_comment_list" style="display: none" th:value="${answer.id}">
+                <div class="comment_list" style="display: none" >
                     <div th:each="comment : ${answer.comments}">
                         <div class="display-flex">
                             <span th:text="${comment.author.name}">댓글 작성자</span>
@@ -111,7 +112,8 @@
                     </div>
 
                     <!-- 댓글 폼 -->
-                    <form  th:object="${commentForm}" th:action="@{|/comment/create/answer/${answer.id}|}" method="post">
+                    <form  th:object="${commentForm}" th:action="@{|/comment/create/answer/${answer.id}|}" method="post"
+                        onsubmit="return check(this)">
                         <div th:fragment="~{form_errors :: formErrosFragment}"></div>
                         <textarea sec:authorize="isAnonymous()" disabled class="form-control" th:field="*{content}" id="content"
                                   rows="10"></textarea>
@@ -142,7 +144,8 @@
     <!-- 답변 반복 끝 -->
 
     <!-- 답변 작성 -->
-    <form class="my-3" th:action="@{|/answer/create/${question.id}|}" th:object="${answerForm}" method="post">
+    <form class="my-3" id="answer-form" th:action="@{|/answer/create/${question.id}|}" th:object="${answerForm}"
+          onsubmit="return check(this);" method="post">
         <div th:fragment="~{form_errors :: formErrosFragment}"></div>
         <textarea sec:authorize="isAnonymous()" disabled class="form-control" th:field="*{content}" id="content"
                   rows="10"></textarea>
@@ -151,6 +154,7 @@
         <input class="btn btn-primary my-2" type="submit" value="답변등록">
     </form>
 </div>
+
 <script layout:fragment="script" type="text/javascript">
     const delete_elements = document.getElementsByClassName('delete');
     Array.from(delete_elements).forEach(function (element) {
@@ -168,18 +172,8 @@
             }
         })
     })
-    const question_comment = document.getElementsByClassName('question_comment_toggle');
-    Array.from(question_comment).forEach(function(element){
-        element.addEventListener('click', function(){
-            if (document.getElementById('question_comment_form').style.display === 'none') {
-                document.getElementById('question_comment_form').style.display = 'block';
-            } else {
-                document.getElementById('question_comment_form').style.display = 'none';
-            }
-        });
-    });
 
-    const toggles = document.getElementsByClassName('answer_comment_toggle');
+    const toggles = document.getElementsByClassName('comment_toggle');
     Array.from(toggles).forEach(t => t.addEventListener('click', function () {
         console.log(t);
         if (t.nextElementSibling.style.display === 'none') {
@@ -188,5 +182,13 @@
             t.nextElementSibling.style.display = 'none';
         }
     }));
+
+    function check(form) {
+        if (form.content.value === "") {
+            alert("내용을 입력해주세요.");
+            return false;
+        }
+        return true;
+    }
 </script>
 </html>

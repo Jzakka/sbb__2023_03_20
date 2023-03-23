@@ -1,11 +1,13 @@
 package com.mysite.sbb.answer;
 
+import com.mysite.sbb.comment.CommentForm;
 import com.mysite.sbb.question.Question;
 import com.mysite.sbb.question.QuestionService;
 import com.mysite.sbb.user.SiteUser;
 import com.mysite.sbb.user.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -29,12 +31,15 @@ public class AnswerController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/create/{id}")
-    public String createAnswer(Model model, @PathVariable("id") Integer id,
+    public String createAnswer(Model model, @PathVariable("id") Integer id, CommentForm commentForm,
                                @Valid AnswerForm answerForm, BindingResult bindingResult, Principal principal) {
         Question question = questionService.getQuestion(id);
         SiteUser siteUser = userService.getUser(principal.getName());
+        Page<Answer> answerPage = answerService.getList(question);
+
         if (bindingResult.hasErrors()) {
             model.addAttribute("question", question);
+            model.addAttribute("answerPage", answerPage);
             return "question_detail";
         }
 
