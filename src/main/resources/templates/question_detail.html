@@ -36,8 +36,29 @@
     <!-- 답변의 갯수 -->
     <h5 class="border-bottom my-3 py-2" th:text="|${#lists.size(question.answerList)}개의 답변이 있습니다.|"></h5>
 
+    <!-- 답변페이징 시작 -->
+    <div th:if="${!answerPage.isEmpty()}">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${!answerPage.hasPrevious} ? 'disabled'">
+                <a class="page-link" th:href="@{|?page=${answerPage.number-1}|}">
+                    <span>이전</span>
+                </a>
+            </li>
+            <li th:each="page : ${#numbers.sequence(0, answerPage.totalPages-1)}"
+                th:if="${page>=answerPage.number-5 and page <= answerPage.number+5}"
+                th:classappend="${page == answerPage.number} ? 'active'" class="page-item">
+                <a th:text="${page}" class="page-link" th:href="@{|?page=${page}|}"></a>
+            </li>
+            <li class="page-item" th:classappend="${!answerPage.hasNext} ? 'disabled'">
+                <a class="page-link" th:href="@{|?page=${answerPage.number+1}|}">
+                    <span>다음</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <!-- 답변페이징 끝 -->
     <!-- 답변 반복 시작 -->
-    <div class="card my-3" th:each="answer : ${question.answerList}">
+    <div class="card my-3" th:each="answer : ${answerPage}">
         <div class="card-body">
             <a th:id="|answer_${answer.id}|"></a>
             <div class="card-text" th:utext="${@commonUtil.markdown(answer.content)}"></div>
