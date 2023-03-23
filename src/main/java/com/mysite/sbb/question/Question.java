@@ -1,6 +1,7 @@
 package com.mysite.sbb.question;
 
 import com.mysite.sbb.answer.Answer;
+import com.mysite.sbb.comment.Comment;
 import com.mysite.sbb.user.SiteUser;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -36,11 +37,19 @@ public class Question {
     @OneToMany(mappedBy = "question", cascade = CascadeType.REMOVE)
     private List<Answer> answerList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "question", cascade = CascadeType.REMOVE)
+    List<Comment> comments = new ArrayList<>();
+
     @ManyToMany
     Set<SiteUser> voter;
 
     public void addAnswer(Answer answer) {
         answer.setQuestion(this);
         answerList.add(answer);
+    }
+
+    public void addComment(Comment comment) {
+        comment.setQuestion(this);
+        comments.add(comment);
     }
 }

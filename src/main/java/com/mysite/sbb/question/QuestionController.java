@@ -3,6 +3,7 @@ package com.mysite.sbb.question;
 import com.mysite.sbb.answer.Answer;
 import com.mysite.sbb.answer.AnswerForm;
 import com.mysite.sbb.answer.AnswerService;
+import com.mysite.sbb.comment.CommentForm;
 import com.mysite.sbb.user.SiteUser;
 import com.mysite.sbb.user.UserService;
 import jakarta.validation.Valid;
@@ -39,7 +40,7 @@ public class QuestionController {
     }
 
     @GetMapping("/detail/{id}")
-    public String detail(Model model, @PathVariable("id") Integer id,
+    public String detail(Model model, @PathVariable("id") Integer id, CommentForm commentForm,
                          AnswerForm answerForm, @RequestParam(name = "page", defaultValue = "0") int page) {
         Question question = questionService.getQuestion(id);
         Page<Answer> answerPage = answerService.getList(question, page);
