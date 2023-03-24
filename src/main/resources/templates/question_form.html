@@ -9,6 +9,14 @@
             <input type="text" th:field="*{subject}" id="subject" class="form-control">
         </div>
         <div class="mb-3">
+            <label for="category" class="form-label">카테고리 설정</label>
+            <select th:field="*{category}" class="form-select form-select-sm" aria-label=".form-select-sm example">
+                <option value="">일반</option>
+                <option th:each="category:${categories}" th:value="${category.name}" th:text="${category.name}">지정
+                </option>
+            </select>
+        </div>
+        <div class="mb-3">
             <label for="content" class="form-label">내용</label>
             <textarea th:field="*{content}" id="content" cols="30" class="form-control"></textarea>
         </div>

@@ -3,6 +3,8 @@ package com.mysite.sbb.question;
 import com.mysite.sbb.answer.Answer;
 import com.mysite.sbb.answer.AnswerForm;
 import com.mysite.sbb.answer.AnswerService;
+import com.mysite.sbb.category.Category;
+import com.mysite.sbb.category.CategoryService;
 import com.mysite.sbb.comment.CommentForm;
 import com.mysite.sbb.user.SiteUser;
 import com.mysite.sbb.user.UserService;
@@ -19,6 +21,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Controller
@@ -28,11 +31,19 @@ public class QuestionController {
     private final QuestionService questionService;
     private final UserService userService;
     private final AnswerService answerService;
+    private final CategoryService categoryService;
+
+    @ModelAttribute("categories")
+    public List<Category> categories() {
+        return categoryService.getList();
+    }
 
     @GetMapping("/list")
     public String list(Model model, @RequestParam(value = "page", defaultValue = "0") int page,
-                       @RequestParam(value = "kw", defaultValue = "") String kw) {
-        Page<Question> paging = questionService.getList(page, kw);
+                       @RequestParam(value = "kw", defaultValue = "") String kw,
+                       @RequestParam(value = "category") Optional<String> category) {
+        Optional<Category> categoryOptional = categoryService.get(category);
+        Page<Question> paging = questionService.getList(page, kw, categoryOptional);
         model.addAttribute("paging", paging);
         model.addAttribute("kw", kw);
 
@@ -52,7 +63,8 @@ public class QuestionController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/create")
-    public String questionCreate(QuestionForm questionForm) {
+    public String questionCreate(QuestionForm questionForm, Model model) {
+        List<Category> categories = categoryService.getList();
         return "question_form";
     }
 
@@ -63,7 +75,8 @@ public class QuestionController {
             return "question_form";
         }
         SiteUser user = userService.getUser(principal.getName());
-        questionService.create(questionForm.getSubject(), questionForm.getContent(), user);
+        Optional<Category> category = categoryService.get(questionForm.getCategory());
+        questionService.create(questionForm.getSubject(), category, questionForm.getContent(), user);
         return "redirect:/question/list";
     }
 

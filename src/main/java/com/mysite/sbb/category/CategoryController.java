@@ -37,6 +37,9 @@ public class CategoryController {
     @PreAuthorize("isAuthenticated() && hasRole('ROLE_ADMIN')")
     @PostMapping("/create")
     public String addCategory(@Valid CategoryForm categoryForm, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "category_form";
+        }
         categoryService.create(categoryForm.getName());
         return "redirect:/question/list";
     }

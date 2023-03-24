@@ -16,10 +16,9 @@
                 <a th:href="@{/category/create}">카테고리 생성</a>
             </div>
             <ul>
-                <li><a href="javascript:void(0);">카테고리1</a></li>
-                <li><a href="javascript:void(0);">카테고리2</a></li>
-                <li><a href="javascript:void(0);">카테고리3</a></li>
-                <li><a href="javascript:void(0);">카테고리4</a></li>
+                <li th:each="category : ${categories}">
+                    <a th:href="@{|?category=${category.name}|}"><span th:text="${category.name}"></span></a>
+                </li>
             </ul>
         </div>
         <!-- 카테고리 끝-->

@@ -2,6 +2,7 @@ package com.mysite.sbb.category;
 
 import com.mysite.sbb.question.Question;
 import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,6 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
+@EqualsAndHashCode(of={"id", "name", "createDate"})
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
