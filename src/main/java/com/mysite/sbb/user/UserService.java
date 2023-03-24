@@ -6,6 +6,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -19,6 +20,8 @@ public class UserService {
         user.setName(username);
         user.setEmail(email);
         user.setPassword(passwordEncoder.encode(password));
+        user.setCreatedAt(LocalDateTime.now());
+        user.setLastModifiedAt(LocalDateTime.now());
         userRepository.save(user);
         return user;
     }
@@ -30,5 +33,11 @@ public class UserService {
         } else {
             throw new DataNotFoundException("siteuser not found");
         }
+    }
+
+    public void resetPassword(SiteUser user, String password) {
+        user.setPassword(passwordEncoder.encode(password));
+        user.setLastModifiedAt(LocalDateTime.now());
+        userRepository.save(user);
     }
 }

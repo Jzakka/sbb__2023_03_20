@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @Entity
@@ -19,4 +21,8 @@ public class SiteUser {
 
     @Column(unique = true)
     private String email;
+
+    private LocalDateTime createdAt;
+
+    private LocalDateTime lastModifiedAt;
 }
