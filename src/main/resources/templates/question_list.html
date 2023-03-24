@@ -10,6 +10,19 @@
                 <button class="btn btn-outline-secondary" type="button" id="btn_search">찾기</button>
             </div>
         </div>
+        <!-- 카테고리 시작-->
+        <div>
+            <div sec:authorize="hasRole('ROLE_ADMIN')">
+                <a th:href="@{/category/create}">카테고리 생성</a>
+            </div>
+            <ul>
+                <li><a href="javascript:void(0);">카테고리1</a></li>
+                <li><a href="javascript:void(0);">카테고리2</a></li>
+                <li><a href="javascript:void(0);">카테고리3</a></li>
+                <li><a href="javascript:void(0);">카테고리4</a></li>
+            </ul>
+        </div>
+        <!-- 카테고리 끝-->
     </div>
     <table class="table">
         <thead class="table-dark">
