@@ -1,0 +1,28 @@
+<html layout:decorate="~{layout}">
+<div layout:fragment="content" class="container">
+    <div th:object="${user}">
+        <h1 th:text="|사용자 이름 *{name}|"></h1>
+        <h1 th:text="|사용자 이메일 *{email}|"></h1>
+        <h2>내가 쓴 글</h2>
+        <ul>
+            <li th:each="question: *{questions}">
+                <a th:href="@{|/question/detail/${question.id}|}" th:text="${question.subject}"></a>
+            </li>
+        </ul>
+        <h2>내가 쓴 답변</h2>
+        <ul>
+            <li th:each="answer: *{answers}">
+                <a th:href="@{|/question/detail/${answer.question.id}|}" th:text="${answer.content}"></a>
+            </li>
+        </ul>
+        <h2>내가 쓴 댓글</h2>
+        <ul>
+            <li th:each="comment: *{comments}">
+                <a th:if="${comment.question != null}" th:href="@{|/question/detail/${comment.question.id}|}" th:text="${comment.content}"></a>
+                <a th:if="${comment.answer != null}" th:href="@{|/question/detail/${comment.answer.question.id}|}" th:text="${comment.content}"></a>
+            </li>
+        </ul>
+
+    </div>
+</div>
+</html>
