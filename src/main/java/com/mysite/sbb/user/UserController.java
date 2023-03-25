@@ -7,7 +7,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.HttpClientErrorException;
 
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
@@ -115,6 +118,16 @@ public class UserController {
         userService.resetPassword(user, passwordForm.getPassword());
 
         return "reset_complete";
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/profile")
+    public String profile(Principal principal, Model model) {
+        String name = principal.getName();
+        SiteUser user = userService.getUser(name);
+
+        model.addAttribute("user", user);
+        return "profile";
     }
 }
 // 사용자 마지막 수정 -> 토큰 발급 -> 사용자 수정 ->
