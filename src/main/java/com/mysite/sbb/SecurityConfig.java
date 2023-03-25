@@ -1,5 +1,9 @@
 package com.mysite.sbb;
 
+import com.mysite.sbb.user.OAuthGoogleUserService;
+import com.mysite.sbb.user.UserService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,6 +21,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
+
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests().requestMatchers(new AntPathRequestMatcher("/**")).permitAll()
@@ -33,7 +38,11 @@ public class SecurityConfig {
                 .logout()
                 .logoutRequestMatcher(new AntPathRequestMatcher("/user/logout"))
                 .logoutSuccessUrl("/")
-                .invalidateHttpSession(true);
+                .invalidateHttpSession(true)
+                .and()
+                .oauth2Login()
+                .loginPage("/user/login")
+                .defaultSuccessUrl("/");
         return http.build();
     }
 

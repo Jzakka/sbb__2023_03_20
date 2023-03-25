@@ -43,6 +43,8 @@ dependencies {
 
 	implementation 'com.sendgrid:sendgrid-java:4.4.1'
 
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client:2.6.2'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
