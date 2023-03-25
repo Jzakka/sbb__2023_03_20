@@ -54,6 +54,7 @@ public class QuestionController {
     public String detail(Model model, @PathVariable("id") Integer id, CommentForm commentForm,
                          AnswerForm answerForm, @RequestParam(name = "page", defaultValue = "0") int page) {
         Question question = questionService.getQuestion(id);
+        questionService.increaseView(question);
         Page<Answer> answerPage = answerService.getList(question, page);
 
         model.addAttribute("question", question);

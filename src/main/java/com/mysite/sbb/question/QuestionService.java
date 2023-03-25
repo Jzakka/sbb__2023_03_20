@@ -34,6 +34,11 @@ public class QuestionService {
         }
     }
 
+    public void increaseView(Question question) {
+        question.increaseView();
+        questionRepository.save(question);
+    }
+
     public Question create(String subject, String content, SiteUser author) {
         Question question = new Question();
         question.setSubject(subject);

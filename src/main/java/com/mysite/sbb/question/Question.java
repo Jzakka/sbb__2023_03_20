@@ -28,6 +28,8 @@ public class Question {
     @Column(columnDefinition = "TEXT")
     private String content;
 
+    private Integer views = 0;
+
     private LocalDateTime createDate;
 
     private LocalDateTime modifiedDate;
@@ -56,5 +58,9 @@ public class Question {
     public void addComment(Comment comment) {
         comment.setQuestion(this);
         comments.add(comment);
+    }
+
+    public void increaseView() {
+        views++;
     }
 }
