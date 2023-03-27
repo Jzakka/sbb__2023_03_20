@@ -157,6 +157,8 @@
 </div>
 
 <script layout:fragment="script" type="text/javascript">
+    var mde = new SimpleMDE({ element: document.querySelector("#answer-form textarea") });
+
     const delete_elements = document.getElementsByClassName('delete');
     Array.from(delete_elements).forEach(function (element) {
         element.addEventListener('click', function () {
