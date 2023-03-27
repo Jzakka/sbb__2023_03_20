@@ -1,0 +1,46 @@
+<html layout:decorate="~{layout}">
+<div layout:fragment="content" class="container">
+    <h2>최근 답변</h2>
+    <!-- 답변페이징 시작 -->
+    <div th:if="${!answerPage.isEmpty()}">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${!answerPage.hasPrevious} ? 'disabled'">
+                <a class="page-link" th:href="@{|?page=${answerPage.number-1}|}">
+                    <span>이전</span>
+                </a>
+            </li>
+            <li th:each="page : ${#numbers.sequence(0, answerPage.totalPages-1)}"
+                th:if="${page>=answerPage.number-5 and page <= answerPage.number+5}"
+                th:classappend="${page == answerPage.number} ? 'active'" class="page-item">
+                <a th:text="${page}" class="page-link" th:href="@{|?page=${page}|}"></a>
+            </li>
+            <li class="page-item" th:classappend="${!answerPage.hasNext} ? 'disabled'">
+                <a class="page-link" th:href="@{|?page=${answerPage.number+1}|}">
+                    <span>다음</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <!-- 답변페이징 끝 -->
+    <table class="table">
+        <thead class="table-dark">
+        <tr>
+            <th>번호</th>
+            <th style="width: 50%">답변</th>
+            <th>글쓴이</th>
+            <th>작성일시</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="text-center" th:each="answer, loop : ${answerPage}">
+            <td th:text="${answerPage.getTotalElements - (answerPage.number*answerPage.size) - loop.index}"></td>
+            <td class="text-start">
+                <a th:href="@{|/question/detail/${answer.question.id}|}" th:text="${answer.content}"></a>
+            </td>
+            <td><span th:if="${answer.author != null}" th:text="${answer.author.name}"></span></td>
+            <td th:text="${#temporals.format(answer.createDate, 'yyyy-MM-dd HH:mm')}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</html>

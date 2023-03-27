@@ -1,5 +1,6 @@
 package com.mysite.sbb.answer;
 
+import com.mysite.sbb.comment.Comment;
 import com.mysite.sbb.comment.CommentForm;
 import com.mysite.sbb.question.Question;
 import com.mysite.sbb.question.QuestionService;
@@ -13,10 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
@@ -92,5 +90,13 @@ public class AnswerController {
         SiteUser user = userService.getUser(principal.getName());
         answerService.vote(answer, user);
         return String.format("redirect:/question/detail/%s#answer_%s", answer.getQuestion().getId(), answer.getId());
+    }
+
+    @GetMapping("/recent")
+    public String recentAnswer(@RequestParam(name = "page", defaultValue = "0") Integer page, Model model) {
+        Page<Answer> recentAnswer = answerService.getList(page);
+        model.addAttribute("answerPage", recentAnswer);
+
+        return "recent_answer";
     }
 }
