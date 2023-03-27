@@ -1,0 +1,47 @@
+<html layout:decorate="~{layout}">
+<div layout:fragment="content" class="container">
+    <h2>최근 댓글</h2>
+    <!-- 댓글페이징 시작 -->
+    <div th:if="${!commentPage.isEmpty()}">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${!commentPage.hasPrevious} ? 'disabled'">
+                <a class="page-link" th:href="@{|?page=${commentPage.number-1}|}">
+                    <span>이전</span>
+                </a>
+            </li>
+            <li th:each="page : ${#numbers.sequence(0, commentPage.totalPages-1)}"
+                th:if="${page>=commentPage.number-5 and page <= commentPage.number+5}"
+                th:classappend="${page == commentPage.number} ? 'active'" class="page-item">
+                <a th:text="${page}" class="page-link" th:href="@{|?page=${page}|}"></a>
+            </li>
+            <li class="page-item" th:classappend="${!commentPage.hasNext} ? 'disabled'">
+                <a class="page-link" th:href="@{|?page=${commentPage.number+1}|}">
+                    <span>다음</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <!-- 댓글페이징 끝 -->
+    <table class="table">
+        <thead class="table-dark">
+        <tr>
+            <th>번호</th>
+            <th style="width: 50%">댓글</th>
+            <th>글쓴이</th>
+            <th>작성일시</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="text-center" th:each="comment, loop : ${commentPage}">
+            <td th:text="${commentPage.getTotalElements - (commentPage.number*commentPage.size) - loop.index}"></td>
+            <td class="text-start">
+                <a th:if="${comment.question != null}" th:href="@{|/question/detail/${comment.question.id}|}" th:text="${comment.content}"></a>
+                <a th:if="${comment.answer != null}" th:href="@{|/question/detail/${comment.answer.question.id}|}" th:text="${comment.content}"></a>
+            </td>
+            <td><span th:if="${comment.author != null}" th:text="${comment.author.name}"></span></td>
+            <td th:text="${#temporals.format(comment.createDate, 'yyyy-MM-dd HH:mm')}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</html>
