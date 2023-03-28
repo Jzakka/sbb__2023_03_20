@@ -43,4 +43,16 @@ public class CategoryService {
         }
         return Optional.empty();
     }
+
+    public Category get(Integer id) {
+        Optional<Category> categoryOptional = categoryRepository.findById(id);
+        if (categoryOptional.isPresent()) {
+            return categoryOptional.get();
+        }
+        throw new DataNotFoundException("카테고리가 존재하지 않습니다.");
+    }
+
+    public void delete(Category category) {
+        categoryRepository.delete(category);
+    }
 }

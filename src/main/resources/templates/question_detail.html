@@ -1,6 +1,9 @@
 <html layout:decorate="~{layout}">
 <div layout:fragment="content" class="container my-3">
     <!-- 질문 -->
+    <a th:if="${question.category != null}" th:href="@{|/question/list?category=${question.category.name}|}">
+        <span th:text="|[${question.category.name}]|"></span>
+    </a>
     <h2 class="border-bottom py-2" th:text="${question.subject}">제목</h2>
     <span th:text="|조회수 ${question.views}|"></span>
     <div class="card my-3">

@@ -12,12 +12,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/category")
@@ -32,6 +31,14 @@ public class CategoryController {
     @GetMapping("/create")
     public String addCategory(CategoryForm categoryForm) {
         return "category_form";
+    }
+
+    @PreAuthorize("isAuthenticated() && hasRole('ROLE_ADMIN')")
+    @GetMapping("/delete/{id}")
+    public String deleteCategory(@PathVariable Integer id) {
+        Category category = categoryService.get(id);
+        categoryService.delete(category);
+        return "redirect:/question/list";
     }
 
     @PreAuthorize("isAuthenticated() && hasRole('ROLE_ADMIN')")
