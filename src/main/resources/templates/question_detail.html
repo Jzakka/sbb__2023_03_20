@@ -46,18 +46,18 @@
             </div>
             <div class="my-3">
                 <a href="javascript:void(0);" class="recommend btn btn-sm btn-outline-secondary"
-                    th:data-uri="@{|/question/vote/${question.id}|}">
+                    th:data-uri="@{|/templates/error/vote/${question.id}|}">
                     추천
                     <span class="badge rounded-pill bg-success" th:text="${#lists.size(question.voter)}"></span>
                 </a>
-                <a th:href="@{|/question/modify/${question.id}|}" class="btn btn-sm btn-outline-secondary"
+                <a th:href="@{|/templates/error/modify/${question.id}|}" class="btn btn-sm btn-outline-secondary"
                    sec:authorize="isAuthenticated()"
                    th:if="${question.author != null and #authentication.getPrincipal().getUsername == question.author.name}"
                    th:text="수정"></a>
                 <a href="javascript:void(0);" class="delete btn btn-sm btn-outline-secondary"
                    sec:authorize="isAuthenticated()"
                    th:if="${question.author != null and #authentication.getPrincipal().getUsername() == question.author.name}"
-                   th:data-uri="@{|/question/delete/${question.id}|}" th:text="삭제"></a>
+                   th:data-uri="@{|/templates/error/delete/${question.id}|}" th:text="삭제"></a>
             </div>
         </div>
     </div>

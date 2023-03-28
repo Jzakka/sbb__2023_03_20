@@ -6,20 +6,20 @@
         <h2>내가 쓴 글</h2>
         <ul>
             <li th:each="question: *{questions}">
-                <a th:href="@{|/question/detail/${question.id}|}" th:text="${question.subject}"></a>
+                <a th:href="@{|/templates/error/detail/${question.id}|}" th:text="${question.subject}"></a>
             </li>
         </ul>
         <h2>내가 쓴 답변</h2>
         <ul>
             <li th:each="answer: *{answers}">
-                <a th:href="@{|/question/detail/${answer.question.id}|}" th:text="${answer.content}"></a>
+                <a th:href="@{|/templates/error/detail/${answer.question.id}|}" th:text="${answer.content}"></a>
             </li>
         </ul>
         <h2>내가 쓴 댓글</h2>
         <ul>
             <li th:each="comment: *{comments}">
-                <a th:if="${comment.question != null}" th:href="@{|/question/detail/${comment.question.id}|}" th:text="${comment.content}"></a>
-                <a th:if="${comment.answer != null}" th:href="@{|/question/detail/${comment.answer.question.id}|}" th:text="${comment.content}"></a>
+                <a th:if="${comment.question != null}" th:href="@{|/templates/error/detail/${comment.question.id}|}" th:text="${comment.content}"></a>
+                <a th:if="${comment.answer != null}" th:href="@{|/templates/error/detail/${comment.answer.question.id}|}" th:text="${comment.content}"></a>
             </li>
         </ul>
 

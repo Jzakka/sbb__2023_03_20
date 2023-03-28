@@ -2,7 +2,7 @@
 <div layout:fragment="content" class="container my-3">
     <div class="row my-3">
         <div class="col-6">
-            <a th:href="@{/question/create}" class="btn btn-primary">질문 등록하기</a>
+            <a th:href="@{/templates/error/create}" class="btn btn-primary">질문 등록하기</a>
         </div>
         <div class="col-6">
             <div class="input-group">
@@ -18,6 +18,8 @@
             <ul>
                 <li th:each="category : ${categories}">
                     <a th:href="@{|?category=${category.name}|}"><span th:text="${category.name}"></span></a>
+                    <a sec:authroize="hasRole('ROLE_ADMIN')" class="delete" href="javascript:;"
+                       th:data-uri="@{|/category/delete/${category.id}|}"><span th:text="삭제"></span></a>
                 </li>
             </ul>
         </div>
@@ -37,7 +39,7 @@
         <tr class="text-center" th:each="question, loop : ${paging}">
             <td th:text="${paging.getTotalElements - (paging.number*paging.size) - loop.index}"></td>
             <td class="text-start">
-                <a th:href="@{|/question/detail/${question.id}|}" th:text="${question.subject}"></a>
+                <a th:href="@{|/templates/error/detail/${question.id}|}" th:text="${question.subject}"></a>
                 <span class="text-danger small ms-2" th:if="${#lists.size(question.answerList) > 0}"
                     th:text="${#lists.size(question.answerList)}"></span>
             </td>
@@ -78,7 +80,7 @@
         </ul>
     </div>
     <!-- 페이징 처리 끝 -->
-    <form th:action="@{/question/list}" method="get" id="searchForm">
+    <form th:action="@{/templates/error/list}" method="get" id="searchForm">
         <input type="hidden" id="kw" name="kw"  th:value="${kw}">
         <input type="hidden" id="page" name="page" th:value="${paging.number}">
         <input type="hidden" id="category" name="category" th:value="${category}">
@@ -97,6 +99,14 @@
         document.getElementById('kw').value = document.getElementById('search_kw').value;
         document.getElementById('page').value = 0;
         document.getElementById('searchForm').submit();
+    });
+    const delete_elements = document.getElementsByClassName('delete');
+    Array.from(delete_elements).forEach(function (element) {
+        element.addEventListener('click', function () {
+            if (confirm('정말로 삭제하시겠습니까?')) {
+                location.href = this.dataset.uri;
+            }
+        });
     });
 </script>
 </html>
