@@ -1,5 +1,6 @@
 package com.mysite.sbb.comment;
 
+import com.mysite.sbb.DataNotFoundException;
 import com.mysite.sbb.answer.Answer;
 import com.mysite.sbb.question.Question;
 import com.mysite.sbb.user.SiteUser;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -42,5 +44,17 @@ public class CommentService {
         sorts.add(Sort.Order.desc("createDate"));
         Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
         return commentRepository.findAll(pageable);
+    }
+
+    public Comment getComment(Integer id) {
+        Optional<Comment> commentOptional = commentRepository.findById(id);
+        if (commentOptional.isPresent()) {
+            return commentOptional.get();
+        }
+        throw new DataNotFoundException("Comment not found");
+    }
+
+    public void delete(Comment comment) {
+        commentRepository.delete(comment);
     }
 }

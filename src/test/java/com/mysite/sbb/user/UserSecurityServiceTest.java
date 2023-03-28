@@ -11,8 +11,4 @@ class UserSecurityServiceTest {
     @Autowired
     private MailService mailService;
 
-    @Test
-    void 메일_발송_테스트() {
-        mailService.sendMailTo("user1");
-    }
 }

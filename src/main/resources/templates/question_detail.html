@@ -16,6 +16,9 @@
                         <span th:text="${comment.author.name}">댓글 작성자</span>
                         <span th:text="${#temporals.format(comment.createDate, 'yyyy-MM-dd HH:mm')}">댓글 작성날짜</span>
                     </div>
+                    <a href="javascript:void(0);" class="delete" sec:authorize="isAuthenticated()"
+                       th:if="${#authentication.getPrincipal().getUsername() == comment.author.name}"
+                       th:data-uri="@{|/comment/delete/${comment.id}|}" th:text="X"/>
                     <div th:text="${comment.content}">댓글 내용</div>
                 </div>
 
@@ -108,6 +111,9 @@
                         <div class="display-flex">
                             <span th:text="${comment.author.name}">댓글 작성자</span>
                             <span th:text="${#temporals.format(comment.createDate, 'yyyy-MM-dd HH:mm')}">댓글 작성날짜</span>
+                            <a href="javascript:void(0);" class="delete" sec:authorize="isAuthenticated()"
+                               th:if="${#authentication.getPrincipal().getUsername() == comment.author.name}"
+                               th:data-uri="@{|/comment/delete/${comment.id}|}" th:text="X"/>
                         </div>
                         <div th:text="${comment.content}">댓글 내용</div>
                     </div>
