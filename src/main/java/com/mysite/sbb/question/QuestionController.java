@@ -46,6 +46,7 @@ public class QuestionController {
         Page<Question> paging = questionService.getList(page, kw, categoryOptional);
         model.addAttribute("paging", paging);
         model.addAttribute("kw", kw);
+        categoryOptional.ifPresent(value -> model.addAttribute("category", value.getName()));
 
         return "question_list";
     }

@@ -72,14 +72,13 @@ public class QuestionService {
     }
 
     public Page<Question> getList(int page, String kw, Optional<Category> category) {
-        Page<Question> questionPage = getList(page, kw);
         if (category.isPresent()) {
-            questionPage = new PageImpl<>(questionPage
-                    .stream()
-                    .filter(q -> category.get().equals(q.getCategory()))
-                    .collect(Collectors.toList()));
+            List<Sort.Order> sorts = new ArrayList<>();
+            sorts.add(Sort.Order.desc("createDate"));
+            PageRequest pageable = PageRequest.of(page, 10, Sort.by(sorts));
+            return questionRepository.findAllByKeyword(kw, pageable, category.get());
         }
-        return questionPage;
+        return getList(page, kw);
     }
 
     public Question create(String subject, Optional<Category> category, String content, SiteUser author) {

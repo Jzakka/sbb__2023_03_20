@@ -81,6 +81,7 @@
     <form th:action="@{/question/list}" method="get" id="searchForm">
         <input type="hidden" id="kw" name="kw"  th:value="${kw}">
         <input type="hidden" id="page" name="page" th:value="${paging.number}">
+        <input type="hidden" id="category" name="category" th:value="${category}">
     </form>
 </div>
 <script layout:fragment="script" type="text/javascript">
