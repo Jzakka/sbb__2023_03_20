@@ -5,7 +5,9 @@ import com.mysite.sbb.answer.AnswerForm;
 import com.mysite.sbb.answer.AnswerService;
 import com.mysite.sbb.category.Category;
 import com.mysite.sbb.category.CategoryService;
+import com.mysite.sbb.comment.Comment;
 import com.mysite.sbb.comment.CommentForm;
+import com.mysite.sbb.comment.CommentService;
 import com.mysite.sbb.user.SiteUser;
 import com.mysite.sbb.user.UserService;
 import jakarta.validation.Valid;
@@ -32,6 +34,7 @@ public class QuestionController {
     private final UserService userService;
     private final AnswerService answerService;
     private final CategoryService categoryService;
+    private final CommentService commentService;
 
     @ModelAttribute("categories")
     public List<Category> categories() {
@@ -52,13 +55,15 @@ public class QuestionController {
     }
 
     @GetMapping("/detail/{id}")
-    public String detail(Model model, @PathVariable("id") Integer id, CommentForm commentForm,
+    public String detail(Model model, @PathVariable("id") Integer id, @ModelAttribute CommentForm commentForm,
                          AnswerForm answerForm, @RequestParam(name = "page", defaultValue = "0") int page) {
         Question question = questionService.getQuestion(id);
         questionService.increaseView(question);
         Page<Answer> answerPage = answerService.getList(question, page);
+        Page<Comment> questionComments = commentService.getList(question, 0);
 
         model.addAttribute("question", question);
+        model.addAttribute("commentPage", questionComments);
         model.addAttribute("answerPage", answerPage);
         return "question_detail";
     }

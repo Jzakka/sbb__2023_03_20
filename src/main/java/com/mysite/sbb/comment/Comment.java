@@ -1,5 +1,6 @@
 package com.mysite.sbb.comment;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mysite.sbb.answer.Answer;
 import com.mysite.sbb.question.Question;
 import com.mysite.sbb.user.SiteUser;
@@ -15,18 +16,21 @@ import java.time.LocalDateTime;
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Integer id;
+    private Integer id;
 
-    String content;
+    private String content;
 
-    LocalDateTime createDate;
-
-    @ManyToOne
-    SiteUser author;
+    private LocalDateTime createDate;
 
     @ManyToOne
-    Question question;
+    @JsonIgnore
+    private SiteUser author;
 
     @ManyToOne
-    Answer answer;
+    @JsonIgnore
+    private Question question;
+
+    @ManyToOne
+    @JsonIgnore
+    private Answer answer;
 }

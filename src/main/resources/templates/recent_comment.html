@@ -35,8 +35,8 @@
         <tr class="text-center" th:each="comment, loop : ${commentPage}">
             <td th:text="${commentPage.getTotalElements - (commentPage.number*commentPage.size) - loop.index}"></td>
             <td class="text-start">
-                <a th:if="${comment.question != null}" th:href="@{|/templates/error/detail/${comment.question.id}|}" th:text="${comment.content}"></a>
-                <a th:if="${comment.answer != null}" th:href="@{|/templates/error/detail/${comment.answer.question.id}|}" th:text="${comment.content}"></a>
+                <a th:if="${comment.question != null}" th:href="@{|/question/detail/${comment.question.id}|}" th:text="${comment.content}"></a>
+                <a th:if="${comment.answer != null}" th:href="@{|/question/detail/${comment.answer.question.id}|}" th:text="${comment.content}"></a>
             </td>
             <td><span th:if="${comment.author != null}" th:text="${comment.author.name}"></span></td>
             <td th:text="${#temporals.format(comment.createDate, 'yyyy-MM-dd HH:mm')}"></td>

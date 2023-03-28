@@ -57,4 +57,11 @@ public class CommentService {
     public void delete(Comment comment) {
         commentRepository.delete(comment);
     }
+
+    public Page<Comment> getList(Question question, Integer page) {
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("createDate"));
+        Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
+        return commentRepository.findAllOfQuestion(question, pageable);
+    }
 }

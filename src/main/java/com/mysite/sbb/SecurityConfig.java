@@ -11,6 +11,8 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -20,11 +22,16 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
-public class SecurityConfig {
+public class SecurityConfig{
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests().requestMatchers(new AntPathRequestMatcher("/**")).permitAll()
+        // 세션 설정안하면 지멋대로 응답하고 다시 응답커밋하려함
+        http.sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.ALWAYS);
+
+        http
+                .authorizeHttpRequests().requestMatchers(new AntPathRequestMatcher("/**")).permitAll()
                 .and()
                 .headers()
                 .addHeaderWriter(new XFrameOptionsHeaderWriter(
@@ -45,6 +52,8 @@ public class SecurityConfig {
                 .defaultSuccessUrl("/");
         return http.build();
     }
+
+
 
     @Bean
     PasswordEncoder passwordEncoder() {
