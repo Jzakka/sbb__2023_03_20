@@ -64,4 +64,11 @@ public class CommentService {
         Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
         return commentRepository.findAllOfQuestion(question, pageable);
     }
+
+    public Page<Comment> getList(Answer answer, Integer page) {
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("createDate"));
+        Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
+        return commentRepository.findAllOfAnswer(answer, pageable);
+    }
 }

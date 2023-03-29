@@ -88,7 +88,7 @@ public class CommentController {
 
     @RequestMapping("/ajax/pagination-of-question")
     @ResponseBody
-    public CommentsVO getList(@RequestBody PaginationVO pageObject, Authentication authentication) {
+    public CommentsVO getListOfQuestion(@RequestBody PaginationVO pageObject, Authentication authentication) {
         Question question = questionService.getQuestion(pageObject.questionId);
         Page<Comment> commentPage = commentService.getList(question, pageObject.pageIdx);
 
@@ -108,6 +108,29 @@ public class CommentController {
         return commentsVO;
     }
 
+    @RequestMapping("/ajax/pagination-of-answer")
+    @ResponseBody
+    public CommentsVO getListOfAnswer(@RequestBody PaginationVO pageObject, Authentication authentication) {
+        //TODO
+        Answer answer = answerService.getAnswer(pageObject.answerId);
+        Page<Comment> commentPage = commentService.getList(answer, pageObject.pageIdx);
+
+        CommentsVO commentsVO = new CommentsVO();
+        commentsVO.totalPages = commentPage.getTotalPages();
+        commentsVO.number = commentPage.getNumber();
+        commentPage
+                .map(comment -> new CommentVO(
+                        comment.getId(),
+                        comment.getContent(),
+                        comment.getCreateDate(),
+                        comment.getAuthor().getName(),
+                        authentication != null
+                                && comment.getAuthor().getName().equals(authentication.getName())))
+                .forEach(vo -> commentsVO.content.add(vo));
+
+        return commentsVO;
+    }
+
     @NoArgsConstructor
     @AllArgsConstructor
     @Setter
@@ -121,7 +144,7 @@ public class CommentController {
     @AllArgsConstructor
     @Setter
     @Getter
-    static class CommentsVO {
+    public static class CommentsVO {
         Integer totalPages;
         Integer number;
         ArrayList<CommentVO> content = new ArrayList<>();
@@ -131,7 +154,7 @@ public class CommentController {
     @AllArgsConstructor
     @Setter
     @Getter
-    static class CommentVO {
+    public static class CommentVO {
         Integer commentId;
         String content;
 

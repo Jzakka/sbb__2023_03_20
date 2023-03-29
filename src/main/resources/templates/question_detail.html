@@ -93,7 +93,7 @@
     <h5 class="border-bottom my-3 py-2" th:text="|${#lists.size(question.answerList)}개의 답변이 있습니다.|"></h5>
 
     <!-- 답변페이징 시작 -->
-    <div th:if="${!answerPage.isEmpty()}">
+    <div th:if="${!answerPage.isEmpty}">
         <ul class="pagination justify-content-center">
             <li class="page-item" th:classappend="${!answerPage.hasPrevious} ? 'disabled'">
                 <a class="page-link" th:href="@{|?page=${answerPage.number-1}|}">
@@ -114,7 +114,7 @@
     </div>
     <!-- 답변페이징 끝 -->
     <!-- 답변 반복 시작 -->
-    <div class="card my-3" th:each="answer : ${answerPage}">
+    <div class="card my-3" th:each="answer : ${answerPage.answers}">
         <div class="card-body">
             <a th:id="|answer_${answer.id}|"></a>
             <div class="card-text" th:utext="${@commonUtil.markdown(answer.content)}"></div>
@@ -124,28 +124,49 @@
                     <div th:text="${#temporals.format(answer.modifiedDate, 'yyyy-MM-dd HH:mm')}"></div>
                 </div>
                 <div class="badge bg-light text-dark p-2 text-start">
-                    <div class="mb-2"><span th:if="${answer.author != null}" th:text="${answer.author.name}"></span>
+                    <div class="mb-2"><span th:if="${answer.author != null}" th:text="${answer.author}"></span>
                     </div>
                     <div th:text="${#temporals.format(answer.createDate, 'yyyy-MM-dd HH:mm')}"></div>
                 </div>
             </div>
-            <div>
+            <div th:id="|answer${answer.id}-comment-container|">
                 <a class="comment_toggle"
                    th:id="|answer_${answer.id}_comment_toggle|" href="javascript:void(0);">댓글 목록</a>
                 <!-- 댓글반복 시작-->
                 <div class="comment_list" style="display: none">
-                    <div th:each="comment : ${answer.comments}">
-                        <div class="display-flex">
-                            <span th:text="${comment.author.name}">댓글 작성자</span>
-                            <span th:text="${#temporals.format(comment.createDate, 'yyyy-MM-dd HH:mm')}">댓글 작성날짜</span>
+                    <div class="answer-comment-list">
+                        <div th:each="comment : ${answer.commentsVO.content}">
+                            <div class="display-flex">
+                                <span th:text="${comment.author}">댓글 작성자</span>
+                                <span th:text="${#temporals.format(comment.createDate, 'yyyy-MM-dd HH:mm')}">댓글 작성날짜</span>
+                            </div>
                             <a href="javascript:void(0);" class="delete" sec:authorize="isAuthenticated()"
-                               th:if="${#authentication.getPrincipal().getUsername() == comment.author.name}"
-                               th:data-uri="@{|/comment/delete/${comment.id}|}" th:text="X"/>
+                               th:if="${#authentication.getPrincipal().getUsername() == comment.author}"
+                               th:data-uri="@{|/comment/delete/${comment.commentId}|}" th:text="X"/>
+                            <div th:text="${comment.content}">댓글 내용</div>
                         </div>
-                        <div th:text="${comment.content}">댓글 내용</div>
                     </div>
-
-
+                    <!-- 댓글 페이징 시작 -->
+                    <div class="answer-comment-page">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item" th:if="${answer.commentsVO.number > 0}">
+                                <a th:href="|javascript:ajaxPaging(null, ${answer.id}, ${answer.commentsVO.number-1});|">
+                                    <span>이전</span>
+                                </a>
+                            </li>
+                            <li th:each="page : ${#numbers.sequence(0, answer.commentsVO.totalPages-1)}"
+                                th:if="${page>=answer.commentsVO.number-5 and page <= answer.commentsVO.number+5}"
+                                th:classappend="${page == answer.commentsVO.number} ? 'active'" class="page-item">
+                                <a th:text="${page}"  th:href="|javascript:ajaxPaging(null, ${answer.id}, ${page});|"></a>
+                            </li>
+                            <li class="page-item" th:if="${answer.commentsVO.number + 1 < answer.commentsVO.totalPages}">
+                                <a th:href="|javascript:ajaxPaging(null, ${answer.id}, ${answer.commentsVO.number+1});|">
+                                    <span>다음</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- 댓글 페이징 끝 -->
                     <!-- 댓글 폼 -->
                     <form th:object="${commentForm}" th:action="@{|/comment/create/answer/${answer.id}|}" method="post"
                           onsubmit="return check(this)">
@@ -160,22 +181,24 @@
                     </form>
                 </div>
                 <!-- 댓글반복 끝-->
+            <!-- 답변 메타데이터 -->
             </div>
             <div class="my-3">
                 <a href="javascript:void(0);" class="recommend btn btn-sm btn-outline-secondary"
                    th:data-uri="@{|/answer/vote/${answer.id}|}">
                     추천
-                    <span class="badge rounded-pill bg-success" th:text="${#lists.size(answer.voter)}"></span>
+                    <span class="badge rounded-pill bg-success" th:text="${answer.voter}"></span>
                 </a>
                 <a sec:authorize="isAuthenticated()" th:href="@{|/answer/modify/${answer.id}|}"
                    class="btn btn-sm btn-outline-secondary"
-                   th:if="${answer.author != null and #authentication.getPrincipal().getUsername() == answer.author.name}"
+                   th:if="${answer.author != null and #authentication.getPrincipal().getUsername() == answer.author}"
                    th:text="수정"></a>
                 <a href="javascript:void(0);" th:data-uri="@{|/answer/delete/${answer.id}|}"
                    class="delete btn btn-sm btn-outline-secondary" sec:authorize="isAuthenticated()"
-                   th:if="${answer.author != null and #authentication.getPrincipal().getUsername() == answer.author.name}"
+                   th:if="${answer.author != null and #authentication.getPrincipal().getUsername() == answer.author}"
                    th:text="삭제"></a>
             </div>
+            <!-- 답변 메타데이터 끝-->
         </div>
     </div>
     <!-- 답변 반복 끝 -->
@@ -238,7 +261,7 @@
         };
 
         $.ajax({
-            url: "/comment/ajax/pagination-of-question",
+            url: qid ? "/comment/ajax/pagination-of-question":"/comment/ajax/pagination-of-answer",
             type: "POST",
             contentType: "application/json;charset=utf-8",
             data: JSON.stringify(submitObj),
@@ -278,7 +301,7 @@
 
             content += '</ul>';
 
-            $('#question-comment-page').html(content);
+            $(qid?'#question-comment-page':`#answer${aid}-comment-container .answer-comment-page`).html(content);
 
             let comments = "";
 
@@ -299,7 +322,7 @@
                 comments += "</div>";
             });
 
-            $('#question-comment-list').html(comments);
+            $(qid?'#question-comment-list':`#answer${aid}-comment-container .answer-comment-list`).html(comments);
             //실제 페이징된 댓글
             //직접 페이징 데이터로 자바스크립트에 다룰 수가 없음. 왜냐면
             //1.작성자 정보가 없음== 직렬화때매 JsonIgnore 시켰음

@@ -1,5 +1,6 @@
 package com.mysite.sbb.answer;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mysite.sbb.comment.Comment;
 import com.mysite.sbb.question.Question;
 import com.mysite.sbb.user.SiteUser;
@@ -38,6 +39,7 @@ public class Answer {
     Set<SiteUser> voter;
 
     @OneToMany(mappedBy = "answer", cascade = CascadeType.REMOVE)
+    @JsonIgnore
     List<Comment> comments = new ArrayList<>();
 
     public void addComment(Comment comment) {
