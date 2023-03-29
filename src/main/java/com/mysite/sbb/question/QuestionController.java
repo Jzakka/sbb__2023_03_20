@@ -7,13 +7,11 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.mysite.sbb.answer.Answer;
 import com.mysite.sbb.answer.AnswerForm;
+import com.mysite.sbb.answer.AnswerPageDTO;
 import com.mysite.sbb.answer.AnswerService;
 import com.mysite.sbb.category.Category;
 import com.mysite.sbb.category.CategoryService;
-import com.mysite.sbb.comment.Comment;
-import com.mysite.sbb.comment.CommentController;
-import com.mysite.sbb.comment.CommentForm;
-import com.mysite.sbb.comment.CommentService;
+import com.mysite.sbb.comment.*;
 import com.mysite.sbb.user.SiteUser;
 import com.mysite.sbb.user.UserService;
 import jakarta.validation.Valid;
@@ -83,7 +81,7 @@ public class QuestionController {
 
         answerPage.forEach(answer -> {
             Page<Comment> commentPage = commentService.getList(answer, 0);
-            AnswerDTO answerDTO = AnswerDTO.builder()
+            AnswerPageDTO.AnswerDTO answerDTO = AnswerPageDTO.AnswerDTO.builder()
                     .id(answer.getId())
                     .author(answer.getAuthor().getName())
                     .content(answer.getContent())
@@ -91,15 +89,15 @@ public class QuestionController {
                     .voter(answer.getVoter().size())
                     .modifiedDate(answer.getModifiedDate()).build();
 
-            ArrayList<CommentController.CommentVO> commentVOS = new ArrayList<>();
-            commentPage.forEach(comment -> commentVOS.add(new CommentController.CommentVO(
+            ArrayList<CommentsVO.CommentVO> commentVOS = new ArrayList<>();
+            commentPage.forEach(comment -> commentVOS.add(new CommentsVO.CommentVO(
                     comment.getId()
                     ,comment.getContent()
                     ,comment.getCreateDate()
                     ,comment.getAuthor().getName()
                     ,principal != null && principal.getName().equals(comment.getAuthor().getName())
             )));
-            answerDTO.commentsVO = new CommentController.CommentsVO(commentPage.getTotalPages(), commentPage.getNumber(), commentVOS);
+            answerDTO.commentsVO = new CommentsVO(commentPage.getTotalPages(), commentPage.getNumber(), commentVOS);
             answerPageDTO.getAnswers().add(answerDTO);
         });
 
@@ -173,38 +171,5 @@ public class QuestionController {
         SiteUser user = userService.getUser(principal.getName());
         questionService.vote(question, user);
         return String.format("redirect:/question/detail/%s", id);
-    }
-
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Getter
-    @Builder
-    public static class AnswerPageDTO {
-        Integer number;
-        Integer totalPages;
-        Boolean hasNext;
-        Boolean hasPrevious;
-        Boolean isEmpty;
-        ArrayList<AnswerDTO> answers = new ArrayList<>();
-    }
-
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Getter
-    @Builder
-    private static class AnswerDTO {
-        Integer id;
-        String author;
-        String content;
-        Integer voter;
-        @JsonSerialize(using = LocalDateTimeSerializer.class)
-        @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-        @JsonFormat(pattern = "yyyy-MM-dd hh:mm")
-        LocalDateTime createDate;
-        @JsonSerialize(using = LocalDateTimeSerializer.class)
-        @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-        @JsonFormat(pattern = "yyyy-MM-dd hh:mm")
-        LocalDateTime modifiedDate;
-        CommentController.CommentsVO commentsVO;
     }
 }

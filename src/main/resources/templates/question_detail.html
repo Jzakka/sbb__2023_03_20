@@ -27,7 +27,7 @@
                     </div>
                 </div>
                 <!-- 댓글 페이징 시작 -->
-                <div id="question-comment-page">
+                <div th:if="${!commentPage.isEmpty}" id="question-comment-page">
                     <ul class="pagination justify-content-center">
                         <li class="page-item" th:if="${commentPage.hasPrevious}">
                             <a th:href="|javascript:ajaxPaging(${question.id}, null, ${commentPage.number-1});|">
@@ -147,7 +147,7 @@
                         </div>
                     </div>
                     <!-- 댓글 페이징 시작 -->
-                    <div class="answer-comment-page">
+                    <div th:if="${!answer.commentsVO.content.isEmpty}" class="answer-comment-page">
                         <ul class="pagination justify-content-center">
                             <li class="page-item" th:if="${answer.commentsVO.number > 0}">
                                 <a th:href="|javascript:ajaxPaging(null, ${answer.id}, ${answer.commentsVO.number-1});|">
@@ -216,7 +216,7 @@
 </div>
 
 <script layout:fragment="script" type="text/javascript">
-    var mde = new SimpleMDE({element: document.querySelector("#answer-form textarea")});
+    let mde = new SimpleMDE({element: document.querySelector("#answer-form textarea")});
 
     const delete_elements = document.getElementsByClassName('delete');
     Array.from(delete_elements).forEach(function (element) {

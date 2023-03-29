@@ -1,11 +1,5 @@
 package com.mysite.sbb.comment;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.mysite.sbb.answer.Answer;
 import com.mysite.sbb.answer.AnswerService;
 import com.mysite.sbb.question.Question;
@@ -26,10 +20,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 
 @Controller
 @RequiredArgsConstructor
@@ -96,7 +86,7 @@ public class CommentController {
         commentsVO.totalPages = commentPage.getTotalPages();
         commentsVO.number = commentPage.getNumber();
         commentPage
-                .map(comment -> new CommentVO(
+                .map(comment -> new CommentsVO.CommentVO(
                         comment.getId(),
                         comment.getContent(),
                         comment.getCreateDate(),
@@ -119,7 +109,7 @@ public class CommentController {
         commentsVO.totalPages = commentPage.getTotalPages();
         commentsVO.number = commentPage.getNumber();
         commentPage
-                .map(comment -> new CommentVO(
+                .map(comment -> new CommentsVO.CommentVO(
                         comment.getId(),
                         comment.getContent(),
                         comment.getCreateDate(),
@@ -138,36 +128,6 @@ public class CommentController {
         Integer questionId;
         Integer answerId;
         Integer pageIdx;
-    }
-
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Setter
-    @Getter
-    public static class CommentsVO {
-        Integer totalPages;
-        Integer number;
-        ArrayList<CommentVO> content = new ArrayList<>();
-    }
-
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Setter
-    @Getter
-    public static class CommentVO {
-        Integer commentId;
-        String content;
-
-        /**
-         * 잭슨에서 LocalDateTime 직렬화에 문제가 있다캄
-         * 이거 없으면 직렬화 안됨
-         */
-        @JsonSerialize(using = LocalDateTimeSerializer.class)
-        @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-        @JsonFormat(pattern = "yyyy-MM-dd hh:mm")
-        LocalDateTime createDate;
-        String author;
-        Boolean isAuthor;
     }
 }
 
