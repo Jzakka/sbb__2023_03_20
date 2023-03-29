@@ -34,6 +34,10 @@ public class SecurityConfig{
                 .authorizeHttpRequests().requestMatchers(new AntPathRequestMatcher("/**")).permitAll()
                 .and()
                 .headers()
+//                .xssProtection()
+//                .and()
+//                .contentSecurityPolicy("script-src 'self'")
+//                .and()
                 .addHeaderWriter(new XFrameOptionsHeaderWriter(
                         XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN
                 ))

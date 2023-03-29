@@ -34,7 +34,7 @@ public class CommentController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/create/question/{id}")
     public String addQuestionComment(@Valid CommentForm commentForm, BindingResult bindingResult,
-                             Principal principal, @PathVariable("id") Integer id) {
+                                     Principal principal, @PathVariable("id") Integer id) {
         SiteUser user = userService.getUser(principal.getName());
         Question question = questionService.getQuestion(id);
 
@@ -47,7 +47,7 @@ public class CommentController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/create/answer/{id}")
     public String addAnswerComment(@Valid CommentForm commentForm, BindingResult bindingResult,
-                             Principal principal, @PathVariable("id") Integer id) {
+                                   Principal principal, @PathVariable("id") Integer id) {
         SiteUser user = userService.getUser(principal.getName());
         Answer answer = answerService.getAnswer(id);
 
@@ -69,7 +69,7 @@ public class CommentController {
     }
 
     @GetMapping("/recent")
-    public String recentComment(@RequestParam(name = "page", defaultValue = "0") Integer page, Model model){
+    public String recentComment(@RequestParam(name = "page", defaultValue = "0") Integer page, Model model) {
         Page<Comment> recentComments = commentService.getList(page);
         model.addAttribute("commentPage", recentComments);
 
@@ -80,51 +80,27 @@ public class CommentController {
     @ResponseBody
     public CommentsVO getListOfQuestion(@RequestBody PaginationVO pageObject, Authentication authentication) {
         Question question = questionService.getQuestion(pageObject.questionId);
-        Page<Comment> commentPage = commentService.getList(question, pageObject.pageIdx);
+        if (authentication != null) {
+            return commentService.getCommentsOfQuestion(question, pageObject.pageIdx, authentication.getName());
+        }
+        return commentService.getCommentsOfQuestion(question, pageObject.pageIdx);
 
-        CommentsVO commentsVO = new CommentsVO();
-        commentsVO.totalPages = commentPage.getTotalPages();
-        commentsVO.number = commentPage.getNumber();
-        commentPage
-                .map(comment -> new CommentsVO.CommentVO(
-                        comment.getId(),
-                        comment.getContent(),
-                        comment.getCreateDate(),
-                        comment.getAuthor().getName(),
-                        authentication != null
-                                && comment.getAuthor().getName().equals(authentication.getName())))
-                .forEach(vo->commentsVO.content.add(vo));
-
-        return commentsVO;
     }
 
     @RequestMapping("/ajax/pagination-of-answer")
     @ResponseBody
     public CommentsVO getListOfAnswer(@RequestBody PaginationVO pageObject, Authentication authentication) {
-        //TODO
         Answer answer = answerService.getAnswer(pageObject.answerId);
-        Page<Comment> commentPage = commentService.getList(answer, pageObject.pageIdx);
-
-        CommentsVO commentsVO = new CommentsVO();
-        commentsVO.totalPages = commentPage.getTotalPages();
-        commentsVO.number = commentPage.getNumber();
-        commentPage
-                .map(comment -> new CommentsVO.CommentVO(
-                        comment.getId(),
-                        comment.getContent(),
-                        comment.getCreateDate(),
-                        comment.getAuthor().getName(),
-                        authentication != null
-                                && comment.getAuthor().getName().equals(authentication.getName())))
-                .forEach(vo -> commentsVO.content.add(vo));
-
-        return commentsVO;
+        if (authentication != null) {
+            return commentService.getCommentsOfAnswer(answer, pageObject.pageIdx, authentication.getName());
+        }
+        return commentService.getCommentsOfAnswer(answer, pageObject.pageIdx);
     }
 
     @NoArgsConstructor
     @AllArgsConstructor
     @Setter
-    static class PaginationVO{
+    static class PaginationVO {
         Integer questionId;
         Integer answerId;
         Integer pageIdx;
