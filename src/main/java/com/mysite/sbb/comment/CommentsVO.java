@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -21,6 +22,32 @@ public class CommentsVO {
     Integer totalPages;
     Integer number;
     ArrayList<CommentVO> content = new ArrayList<>();
+
+    public void injectDatum(Page<Comment> commentPage) {
+        this.totalPages = commentPage.getTotalPages();
+        this.number = commentPage.getNumber();
+        commentPage
+                .map(comment -> new CommentsVO.CommentVO(
+                        comment.getId(),
+                        comment.getContent(),
+                        comment.getCreateDate(),
+                        comment.getAuthor().getName(),
+                        false))
+                .forEach(vo -> this.content.add(vo));
+    }
+
+    public void injectDatum(Page<Comment> commentPage, String username) {
+        this.totalPages = commentPage.getTotalPages();
+        this.number = commentPage.getNumber();
+        commentPage
+                .map(comment -> new CommentsVO.CommentVO(
+                        comment.getId(),
+                        comment.getContent(),
+                        comment.getCreateDate(),
+                        comment.getAuthor().getName(),
+                        comment.getAuthor().getName().equals(username)))
+                .forEach(vo -> this.content.add(vo));
+    }
 
     @NoArgsConstructor
     @AllArgsConstructor

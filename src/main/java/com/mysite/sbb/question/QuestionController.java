@@ -1,10 +1,5 @@
 package com.mysite.sbb.question;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.mysite.sbb.answer.Answer;
 import com.mysite.sbb.answer.AnswerForm;
 import com.mysite.sbb.answer.AnswerPageDTO;
@@ -26,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -54,7 +48,6 @@ public class QuestionController {
         Optional<Category> categoryOptional = categoryService.get(category);
         Page<Question> paging = questionService.getList(page, kw, categoryOptional);
         model.addAttribute("paging", paging);
-        model.addAttribute("kw", kw);
         categoryOptional.ifPresent(value -> model.addAttribute("category", value.getName()));
 
         return "question_list";
@@ -75,30 +68,17 @@ public class QuestionController {
                 .number(answerPage.getNumber())
                 .hasNext(answerPage.hasNext())
                 .hasPrevious(answerPage.hasPrevious())
-                .isEmpty(answerPage.getTotalPages()==0)
+                .isEmpty(answerPage.getTotalPages() == 0)
                 .answers(new ArrayList<>())
                 .build();
 
         answerPage.forEach(answer -> {
             Page<Comment> commentPage = commentService.getList(answer, 0);
-            AnswerPageDTO.AnswerDTO answerDTO = AnswerPageDTO.AnswerDTO.builder()
-                    .id(answer.getId())
-                    .author(answer.getAuthor().getName())
-                    .content(answer.getContent())
-                    .createDate(answer.getCreateDate())
-                    .voter(answer.getVoter().size())
-                    .modifiedDate(answer.getModifiedDate()).build();
-
-            ArrayList<CommentsVO.CommentVO> commentVOS = new ArrayList<>();
-            commentPage.forEach(comment -> commentVOS.add(new CommentsVO.CommentVO(
-                    comment.getId()
-                    ,comment.getContent()
-                    ,comment.getCreateDate()
-                    ,comment.getAuthor().getName()
-                    ,principal != null && principal.getName().equals(comment.getAuthor().getName())
-            )));
-            answerDTO.commentsVO = new CommentsVO(commentPage.getTotalPages(), commentPage.getNumber(), commentVOS);
-            answerPageDTO.getAnswers().add(answerDTO);
+            if (principal != null) {
+                answerPageDTO.addAnswer(commentPage, answer, principal.getName());
+            } else {
+                answerPageDTO.addAnswer(commentPage, answer);
+            }
         });
 
         model.addAttribute("question", question);
@@ -110,7 +90,6 @@ public class QuestionController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/create")
     public String questionCreate(QuestionForm questionForm, Model model) {
-        List<Category> categories = categoryService.getList();
         return "question_form";
     }
 

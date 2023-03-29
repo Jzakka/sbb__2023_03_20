@@ -72,20 +72,12 @@ public class CommentService {
         return commentRepository.findAllOfAnswer(answer, pageable);
     }
 
-    public CommentsVO getCommentsOfAnswer(Answer answer, Integer pageIdx, String authorName) {
+    public CommentsVO getCommentsOfAnswer(Answer answer, Integer pageIdx, String username) {
         Page<Comment> commentPage = getList(answer, pageIdx);
 
         CommentsVO commentsVO = new CommentsVO();
-        commentsVO.totalPages = commentPage.getTotalPages();
-        commentsVO.number = commentPage.getNumber();
-        commentPage
-                .map(comment -> new CommentsVO.CommentVO(
-                        comment.getId(),
-                        comment.getContent(),
-                        comment.getCreateDate(),
-                        comment.getAuthor().getName(),
-                        comment.getAuthor().getName().equals(authorName)))
-                .forEach(vo -> commentsVO.content.add(vo));
+        commentsVO.injectDatum(commentPage, username);
+
         return commentsVO;
     }
 
@@ -93,16 +85,8 @@ public class CommentService {
         Page<Comment> commentPage = getList(answer, pageIdx);
 
         CommentsVO commentsVO = new CommentsVO();
-        commentsVO.totalPages = commentPage.getTotalPages();
-        commentsVO.number = commentPage.getNumber();
-        commentPage
-                .map(comment -> new CommentsVO.CommentVO(
-                        comment.getId(),
-                        comment.getContent(),
-                        comment.getCreateDate(),
-                        comment.getAuthor().getName(),
-                        false))
-                .forEach(vo -> commentsVO.content.add(vo));
+        commentsVO.injectDatum(commentPage);
+
         return commentsVO;
     }
 
@@ -110,34 +94,16 @@ public class CommentService {
         Page<Comment> commentPage = getList(question, pageIdx);
 
         CommentsVO commentsVO = new CommentsVO();
-        commentsVO.totalPages = commentPage.getTotalPages();
-        commentsVO.number = commentPage.getNumber();
-        commentPage
-                .map(comment -> new CommentsVO.CommentVO(
-                        comment.getId(),
-                        comment.getContent(),
-                        comment.getCreateDate(),
-                        comment.getAuthor().getName(),
-                        false))
-                .forEach(vo -> commentsVO.content.add(vo));
+        commentsVO.injectDatum(commentPage);
 
         return commentsVO;
     }
 
-    public CommentsVO getCommentsOfQuestion(Question question, Integer pageIdx, String authorName) {
+    public CommentsVO getCommentsOfQuestion(Question question, Integer pageIdx, String username) {
         Page<Comment> commentPage = getList(question, pageIdx);
 
         CommentsVO commentsVO = new CommentsVO();
-        commentsVO.totalPages = commentPage.getTotalPages();
-        commentsVO.number = commentPage.getNumber();
-        commentPage
-                .map(comment -> new CommentsVO.CommentVO(
-                        comment.getId(),
-                        comment.getContent(),
-                        comment.getCreateDate(),
-                        comment.getAuthor().getName(),
-                        comment.getAuthor().getName().equals(authorName)))
-                .forEach(vo -> commentsVO.content.add(vo));
+        commentsVO.injectDatum(commentPage, username);
 
         return commentsVO;
     }
