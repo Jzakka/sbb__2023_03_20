@@ -205,7 +205,7 @@
 
     <!-- 답변 작성 -->
     <form class="my-3" id="answer-form" th:action="@{|/answer/create/${question.id}|}" th:object="${answerForm}"
-          onsubmit="return check(this);" method="post">
+          onsubmit="return check();" method="post">
         <div th:fragment="~{form_errors :: formErrosFragment}"></div>
         <textarea sec:authorize="isAnonymous()" disabled class="form-control" th:field="*{content}" id="content"
                   rows="10"></textarea>
@@ -245,8 +245,8 @@
         }
     }));
 
-    function check(form) {
-        if (form.content.value === "") {
+    function check() {
+        if (mde.value() === "") {
             alert("내용을 입력해주세요.");
             return false;
         }
