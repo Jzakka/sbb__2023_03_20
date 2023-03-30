@@ -204,13 +204,10 @@
     <!-- 답변 반복 끝 -->
 
     <!-- 답변 작성 -->
-    <form class="my-3" id="answer-form" th:action="@{|/answer/create/${question.id}|}" th:object="${answerForm}"
+    <form sec:authorize="isAuthenticated()" class="my-3" id="answer-form" th:action="@{|/answer/create/${question.id}|}" th:object="${answerForm}"
           onsubmit="return check();" method="post">
         <div th:fragment="~{form_errors :: formErrosFragment}"></div>
-        <textarea sec:authorize="isAnonymous()" disabled class="form-control" th:field="*{content}" id="content"
-                  rows="10"></textarea>
-        <textarea sec:authorize="isAuthenticated()" class="form-control" th:field="*{content}" id="content"
-                  rows="10"></textarea>
+        <textarea class="form-control" th:field="*{content}" id="content" rows="10"></textarea>
         <input class="btn btn-primary my-2" type="submit" value="답변등록">
     </form>
 </div>

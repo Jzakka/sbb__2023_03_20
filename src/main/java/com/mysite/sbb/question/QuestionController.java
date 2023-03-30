@@ -53,33 +53,15 @@ public class QuestionController {
         return "question_list";
     }
 
-    //TODO 리팩필요
     @GetMapping("/detail/{id}")
     public String detail(Principal principal, Model model, @PathVariable("id") Integer id, @ModelAttribute CommentForm commentForm,
                          AnswerForm answerForm, @RequestParam(name = "page", defaultValue = "0") int page) {
         Question question = questionService.getQuestion(id);
         questionService.increaseView(question);
         Page<Answer> answerPage = answerService.getList(question, page);
+
         Page<Comment> questionComments = commentService.getList(question, 0);
-
-        AnswerPageDTO answerPageDTO = AnswerPageDTO
-                .builder()
-                .totalPages(answerPage.getTotalPages())
-                .number(answerPage.getNumber())
-                .hasNext(answerPage.hasNext())
-                .hasPrevious(answerPage.hasPrevious())
-                .isEmpty(answerPage.getTotalPages() == 0)
-                .answers(new ArrayList<>())
-                .build();
-
-        answerPage.forEach(answer -> {
-            Page<Comment> commentPage = commentService.getList(answer, 0);
-            if (principal != null) {
-                answerPageDTO.addAnswer(commentPage, answer, principal.getName());
-            } else {
-                answerPageDTO.addAnswer(commentPage, answer);
-            }
-        });
+        AnswerPageDTO answerPageDTO = getAnswerPageDTO(principal, answerPage);
 
         model.addAttribute("question", question);
         model.addAttribute("commentPage", questionComments);
@@ -150,5 +132,27 @@ public class QuestionController {
         SiteUser user = userService.getUser(principal.getName());
         questionService.vote(question, user);
         return String.format("redirect:/question/detail/%s", id);
+    }
+
+    private AnswerPageDTO getAnswerPageDTO(Principal principal, Page<Answer> answerPage) {
+        AnswerPageDTO answerPageDTO = AnswerPageDTO
+                .builder()
+                .totalPages(answerPage.getTotalPages())
+                .number(answerPage.getNumber())
+                .hasNext(answerPage.hasNext())
+                .hasPrevious(answerPage.hasPrevious())
+                .isEmpty(answerPage.getTotalPages() == 0)
+                .answers(new ArrayList<>())
+                .build();
+
+        answerPage.forEach(answer -> {
+            Page<Comment> commentPage = commentService.getList(answer, 0);
+            if (principal != null) {
+                answerPageDTO.addAnswer(commentPage, answer, principal.getName());
+            } else {
+                answerPageDTO.addAnswer(commentPage, answer);
+            }
+        });
+        return answerPageDTO;
     }
 }
