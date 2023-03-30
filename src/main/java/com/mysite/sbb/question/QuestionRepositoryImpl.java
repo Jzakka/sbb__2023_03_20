@@ -35,9 +35,9 @@ public class QuestionRepositoryImpl implements QuestionRepositoryCustom {
                         .or(siteUser1.name.like(kw))
                         .or(answer.content.like(kw))
                         .or(siteUser2.name.like(kw)))
+                .orderBy(question.createDate.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .orderBy(question.createDate.desc())
                 .fetch();
 
         return new PageImpl<>(content, pageable, queryFactory.select(question.count()).from(question).fetchFirst());
@@ -59,9 +59,9 @@ public class QuestionRepositoryImpl implements QuestionRepositoryCustom {
                         .or(answer.content.like(kw))
                         .or(siteUser2.name.like(kw))
                         .and(question.category.eq(category)))
+                .orderBy(question.createDate.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .orderBy(question.createDate.desc())
                 .fetch();
 
         return new PageImpl<>(content, pageable,
