@@ -1,10 +1,8 @@
 package com.mysite.sbb.question;
 
-import com.mysite.sbb.answer.QAnswer;
 import com.mysite.sbb.category.Category;
 import com.mysite.sbb.user.QSiteUser;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;

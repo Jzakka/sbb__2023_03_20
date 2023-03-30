@@ -1,6 +1,5 @@
 package com.mysite.sbb.answer;
 
-import com.mysite.sbb.comment.Comment;
 import com.mysite.sbb.comment.CommentForm;
 import com.mysite.sbb.question.Question;
 import com.mysite.sbb.question.QuestionService;

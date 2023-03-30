@@ -1,22 +1,11 @@
 package com.mysite.sbb.category;
 
-import com.mysite.sbb.user.UserRole;
-import com.mysite.sbb.user.UserSecurityService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.access.prepost.PreFilter;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-
-import java.security.Principal;
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/category")
@@ -24,8 +13,6 @@ import java.util.Optional;
 public class CategoryController {
 
     private final CategoryService categoryService;
-
-    private final UserSecurityService userSecurityService;
 
     @PreAuthorize("isAuthenticated() && hasRole('ROLE_ADMIN')")
     @GetMapping("/create")
